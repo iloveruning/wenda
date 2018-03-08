@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cll.wenda.mapper.CommentMapper">
+
+    <insert id="save" parameterType="com.cll.wenda.model.Comment" useGeneratedKeys="true" keyProperty="id" keyColumn="comment_id">
+        INSERT INTO comment(comment_content, comment_pic, comment_puber,comment_author,answer_id)
+        VALUES (#{content}, #{pic}, #{puber},#{author},#{aid})
+    </insert>
+
+    <select id="findById" resultType="com.cll.wenda.model.Comment">
+        SELECT comment_id id,comment_puber puber,comment_author author,comment_pubtime pubtime ,
+        comment_content content ,comment_pic pic ,comment_dz dz ,answer_id aid,
+        comment_ismydz isMyDz,comment_reply reply
+        FROM comment
+        WHERE comment_id=#{id}
+    </select>
+
+
+    <update id="updateDz">
+        UPDATE comment SET comment_dz=comment_dz+#{number}
+        WHERE comment_id=#{id};
+    </update>
+
+
+    <delete id="deleteById">
+        DELETE FROM comment WHERE comment_id=#{id};
+    </delete>
+
+    <insert id="commentThumbsUp">
+        INSERT INTO commentdz(user_id,comment_id)
+        VALUES (#{uid},#{cid})
+    </insert>
+
+    <update id="updateReply">
+        UPDATE comment SET comment_reply=comment_reply+#{number}
+        WHERE comment_id=#{cid}
+    </update>
+
+
+    <select id="findByPuber" resultType="com.cll.wenda.model.Comment">
+        SELECT comment_id id,comment_puber puber,comment_author author,comment_pubtime pubtime ,
+        comment_content content ,comment_pic pic ,comment_dz dz ,answer_id aid,
+        comment_ismydz isMyDz,comment_reply reply
+        FROM comment
+        WHERE comment_puber=#{uid}
+    </select>
+
+
+    <select id="findByAnswerId" resultType="com.cll.wenda.model.Comment">
+         SELECT comment_id id,comment_puber puber,comment_author author,comment_pubtime pubtime ,
+        comment_content content ,comment_pic pic ,comment_dz dz ,answer_id aid,
+        comment_ismydz isMyDz,comment_reply reply
+        FROM comment
+        WHERE answer_id=#{aid}
+        ORDER BY comment_dz ,comment_reply,comment_pubtime DESC
+    </select>
+
+
+    <select id="findHotComment" resultType="com.cll.wenda.model.Comment">
+        SELECT comment_id id,comment_puber puber,comment_author author,comment_pubtime pubtime ,
+        comment_content content ,comment_pic pic ,comment_dz dz ,answer_id aid,
+        comment_ismydz isMyDz,comment_reply reply
+        FROM comment
+        WHERE answer_id=#{aid}
+        ORDER BY comment_dz ,comment_reply,comment_pubtime DESC
+        LIMIT 1
+    </select>
+
+    <select id="countThumbsUp" resultType="int">
+        SELECT COUNT(*) FROM commentdz
+        WHERE user_id=#{uid} AND comment_id=#{cid}
+    </select>
+
+    <delete id="deleteThumbsUp">
+        DELETE FROM commentdz
+        WHERE user_id=#{uid} AND comment_id=#{cid}
+    </delete>
+
+
+    <delete id="deleteByAid">
+        DELETE FROM comment
+        WHERE answer_id=#{aid}
+    </delete>
+
+
+
+</mapper>

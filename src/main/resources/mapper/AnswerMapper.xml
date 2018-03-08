@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cll.wenda.mapper.AnswerMapper">
+
+    <insert id="save" parameterType="com.cll.wenda.model.Answer" useGeneratedKeys="true" keyProperty="id" keyColumn="answer_id">
+        INSERT INTO answer(answer_content, answer_pic,
+        answer_puber,answer_username,answer_summary,question_id)
+        VALUES (#{content}, #{pic}, #{puber},#{username},#{summary},#{qid})
+
+    </insert>
+
+    <select id="findById" resultType="com.cll.wenda.model.Answer">
+        SELECT answer_id id,answer_pubtime pubtime ,question_id qid,
+        answer_content content ,answer_pic pic ,answer_dz dz ,answer_comment cmt ,
+        answer_collection sc, answer_username username FROM answer
+        WHERE answer_id=#{id}
+    </select>
+
+
+    <insert id="saveCollection">
+        INSERT INTO collection(user_id,answer_id)
+        VALUES (#{uid},#{aid});
+    </insert>
+
+    <update id="updateComment">
+        UPDATE answer SET answer_comment=answer_comment+#{number}
+        WHERE answer_id=#{aid};
+    </update>
+
+
+    <insert id="saveThumbsUp">
+        INSERT INTO thumbsup(user_id,answer_id)
+        VALUES (#{uid},#{aid})
+    </insert>
+
+
+    <update id="updateDz">
+        UPDATE answer SET answer_dz=answer_dz+#{number}
+        WHERE answer_id=#{id};
+    </update>
+
+
+    <delete id="deleteById">
+        DELETE FROM answer WHERE answer_id=#{id};
+    </delete>
+
+
+    <select id="findAnswersByQuestionId" resultType="com.cll.wenda.model.Answer">
+        SELECT answer_id id,answer_pubtime pubtime ,
+        answer_pic pic ,answer_dz dz ,answer_comment cmt ,
+        answer_puber puber ,answer_summary summary, answer_username username
+        FROM answer
+        WHERE question_id=#{id}
+        ORDER BY answer_pubtime
+    </select>
+
+
+    <select id="findCollectAnswersByUserId" resultType="com.cll.wenda.model.Answer">
+        SELECT a.answer_id id, a.answer_pubtime pubtime, a.answer_content content, a.answer_pic pic, a.answer_dz dz, a.answer_comment cmt, a.answer_puber puber, a.answer_collection sc, a.answer_summary summary, a.answer_username username, a.question_id qid
+        FROM answer a JOIN collection c ON a.answer_id = c.answer_id
+        WHERE c.user_id = #{uid}
+        ORDER BY a.answer_pubtime
+    </select>
+
+    <select id="findMyAnswers" resultType="com.cll.wenda.model.Answer">
+        SELECT answer_id id,answer_pubtime pubtime ,
+        answer_content content ,answer_pic pic ,answer_dz dz ,answer_comment cmt ,
+        answer_puber puber ,answer_collection sc, answer_summary summary, answer_username username ,question_id qid FROM answer
+        WHERE answer_puber=#{uid}
+        ORDER BY answer_pubtime DESC
+    </select>
+
+    <delete id="removeThumbsUp">
+        DELETE FROM thumbsup
+        WHERE user_id=#{uid} AND answer_id=#{aid}
+    </delete>
+
+    <select id="findQuestionHotAnswer" resultType="com.cll.wenda.model.Answer">
+        SELECT answer_id id,answer_pubtime pubtime ,
+        answer_content content ,answer_pic pic ,answer_dz dz ,answer_comment cmt ,
+        answer_puber puber ,answer_collection sc, answer_summary summary, answer_username username ,question_id qid
+        FROM answer
+        WHERE question_id=#{qid}
+        ORDER BY answer_dz,answer_comment,answer_pubtime DESC
+        LIMIT 1
+    </select>
+
+    <select id="countCollection" resultType="int">
+        SELECT count(*) FROM collection
+        WHERE user_id=#{uid} AND answer_id=#{aid}
+    </select>
+
+    <update id="updateCollection">
+        UPDATE answer SET answer_collection=answer_collection+#{number}
+        WHERE answer_id=#{aid}
+    </update>
+
+    <select id="countThumbsUp" resultType="int">
+        SELECT count(*) FROM thumbsup
+        WHERE user_id=#{uid} AND answer_id=#{aid}
+    </select>
+
+    <delete id="removeCollection">
+        DELETE FROM collection
+        WHERE user_id=#{uid} AND answer_id=#{aid}
+    </delete>
+
+    <delete id="deleteMyAnswer">
+        DELETE FROM answer
+        WHERE answer_id=#{aid} AND answer_puber=#{uid}
+    </delete>
+
+    <delete id="deleteCollectionByAid">
+        DELETE FROM collection
+        WHERE answer_id=#{aid}
+    </delete>
+
+    <delete id="deleteThumbsUpByAid">
+        DELETE FROM thumbsup
+        WHERE answer_id=#{aid}
+    </delete>
+
+
+</mapper>

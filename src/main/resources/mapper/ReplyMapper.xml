@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cll.wenda.mapper.ReplyMapper">
+
+    <insert id="save" parameterType="com.cll.wenda.model.Reply" useGeneratedKeys="true" keyProperty="id" keyColumn="reply_id">
+        INSERT INTO reply(reply_content,reply_pic, reply_puber,reply_author,comment_id)
+        VALUES (#{content}, #{pic}, #{puber},#{author},#{cid})
+    </insert>
+
+
+    <select id="findReplyByCommentId" resultType="com.cll.wenda.model.Reply">
+        SELECT reply_id id,reply_puber puber ,reply_pubtime pubtime ,reply_content content ,
+        reply_pic pic ,reply_author author,comment_id cid FROM reply WHERE comment_id=#{cid};
+    </select>
+
+    <delete id="deleteByCommentId">
+        DELETE FROM reply
+        WHERE comment_id=#{cid}
+    </delete>
+
+
+
+</mapper>

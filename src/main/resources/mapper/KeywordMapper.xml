@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cll.wenda.mapper.KeywordMapper">
+
+  <insert id="batchSave">
+      INSERT INTO keyword(keyword)
+      VALUES
+      <foreach collection="list" item="keyword" separator=",">
+          (#{keyword})
+      </foreach>
+  </insert>
+
+    <insert id="save">
+        INSERT INTO keyword(keyword)
+        VALUES (#{keyword})
+    </insert>
+
+    <select id="blurQuery" resultType="java.lang.String">
+        SELECT keyword keyword FROM keyword
+        WHERE keyword LIKE #{kwd}
+        LIMIT 6
+    </select>
+
+    <select id="findHotKeywords" resultType="java.lang.String">
+        SELECT keyword  FROM keyword
+        ORDER BY counts DESC
+        LIMIT 6
+    </select>
+
+    <update id="updateKeywordCounts">
+        UPDATE keyword SET counts=counts+1
+        WHERE keyword=#{kwd}
+    </update>
+
+    <select id="isExist" resultType="int">
+        SELECT count(*) FROM keyword
+        WHERE keyword=#{kwd}
+    </select>
+
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cll.wenda.mapper.UserMapping">
+
+    <insert id="save" parameterType="com.cll.wenda.model.User" useGeneratedKeys="true" keyProperty="id" keyColumn="user_id">
+        INSERT INTO user(user_uuid,user_openid,user_sex,user_wxname,user_name,user_img)
+        VALUES (#{uuid},#{openid},#{sex},#{wxname},#{username},#{headimg})
+    </insert>
+
+    <select id="findByOpenid" resultType="com.cll.wenda.model.User">
+        SELECT user_id id,user_uuid uuid,user_name username,user_wxname wxname,
+        user_sex sex,user_img headimg,user_createtime createTime,user_openid openid
+        FROM user WHERE user_openid=#{openid}
+    </select>
+
+    <select id="findHeadImgByUid" resultType="java.lang.String">
+        SELECT user_img FROM  user
+        WHERE  user_id=#{uid}
+    </select>
+
+
+    <select id="findByUUId" resultType="com.cll.wenda.model.User">
+        SELECT user_id id,user_uuid uuid,user_name username,user_wxname wxname,
+        user_sex sex,user_img headimg,user_createtime createTime,user_openid openid
+        FROM user WHERE user_uuid=#{uuid}
+    </select>
+
+
+</mapper>

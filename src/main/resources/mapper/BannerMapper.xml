@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cll.wenda.mapper.BannerMapper">
+
+    <insert id="save" parameterType="com.cll.wenda.model.Banner" useGeneratedKeys="true" keyColumn="banner_id"
+            keyProperty="id">
+        INSERT INTO banner(banner_img,
+        <if test="title != null and title != ''">
+            banner_title,
+        </if>
+        banner_url)VALUES (#{img},
+        <if test="title != null and title != ''">
+            #{title},
+        </if>
+        #{url})
+    </insert>
+
+    <select id="listNewestBanner" resultType="com.cll.wenda.model.Banner">
+        SELECT banner_id id ,banner_img img ,banner_url url ,banner_title title
+        FROM banner
+        ORDER BY createtime DESC
+        LIMIT 4
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM banner
+        WHERE banner_id=#{bid}
+    </delete>
+
+
+</mapper>

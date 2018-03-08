@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cll.wenda.mapper.QuestionMapper">
+
+    <insert id="save" parameterType="com.cll.wenda.model.Question" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="question_id">
+        INSERT INTO question(question_title,question_content,question_pic,
+        <if test="username != null and username != ''">
+            question_username,
+        </if>
+        <if test="topic != null and topic != ''">
+            question_topic,
+        </if>
+        question_puber)
+        VALUES (#{title},#{content},#{pic},
+        <if test="username != null and username != ''">
+            #{username},
+        </if>
+        <if test="topic != null and topic != ''">
+            #{topic},
+        </if>
+        #{puber})
+
+    </insert>
+
+    <select id="findById" resultType="com.cll.wenda.model.Question">
+        SELECT question_id id,question_title title,question_pubtime pubtime ,
+        question_content content ,question_pic pic ,question_ans ans,question_att att ,
+        question_puber puber ,question_username username,question_readsize readSize FROM question
+        WHERE question_id=#{id}
+    </select>
+
+    <update id="updateAtt">
+        UPDATE question SET question_att=question_att+#{number}
+        WHERE question_id=#{qid};
+    </update>
+
+    <insert id="attention">
+        INSERT INTO attention(user_id,question_id)
+        VALUES (#{uid},#{qid})
+    </insert>
+
+
+    <delete id="deleteById">
+        DELETE FROM question WHERE question_id=#{id};
+    </delete>
+
+
+    <select id="findAttQuestionByUserId" resultType="com.cll.wenda.model.Question">
+        SELECT
+            q.question_id id,
+            q.question_title title,
+            q.question_pubtime pubtime,
+            q.question_content content,
+            q.question_pic pic,
+            q.question_ans ans,
+            q.question_att att,
+            q.question_puber puber,
+            q.question_username username,
+            q.question_readsize readSize
+        FROM
+            question q JOIN attention a ON q.question_id=a.question_id
+        WHERE
+            user_id = #{uid}
+    </select>
+
+
+    <select id="findMyQuestions" resultType="com.cll.wenda.model.Question">
+        SELECT question_id id,question_title title,question_pubtime pubtime ,
+        question_content content ,question_pic pic ,question_ans ans,question_att att ,
+        question_puber puber ,question_username username,question_readsize readSize FROM question
+        WHERE question_puber=#{uid}
+    </select>
+
+
+    <update id="updateAns">
+        UPDATE question SET question_ans=question_ans+#{number}
+        WHERE question_id=#{qid}
+    </update>
+
+    <update id="increaseReadSize">
+        UPDATE question SET question_readsize=question_readsize+1
+        WHERE question_id=#{qid}
+    </update>
+
+    <select id="findHotestQuestion" resultType="com.cll.wenda.model.Question">
+        SELECT question_id id,question_title title,question_pubtime pubtime ,
+        question_content content ,question_pic pic ,question_ans ans,question_att att ,
+        question_puber puber ,question_username username,question_readsize readSize,
+        (question_ans*5+question_ans*5+question_readsize+100)*360/(UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(question_pubtime)+7200) AS createTime
+        FROM question
+        ORDER BY createTime DESC
+    </select>
+
+    <select id="isAttentted" resultType="int">
+        SELECT COUNT(*) FROM attention
+        WHERE user_id=#{uid} AND question_id=#{qid}
+    </select>
+
+    <delete id="deleteAtt">
+        DELETE FROM attention
+        WHERE user_id=#{uid} AND question_id=#{qid}
+    </delete>
+
+
+    <select id="findHotTopic" resultType="java.lang.String">
+      SELECT question_topic FROM question
+      GROUP BY question_topic
+      ORDER BY count(*) DESC
+    </select>
+
+    <select id="findByTopic" resultType="com.cll.wenda.model.Question">
+        SELECT question_id id,question_title title,question_pic pic ,question_pubtime pubtime,
+        question_username username ,question_content content ,question_ans ans,question_att att
+        FROM question
+        WHERE question_topic=#{topic}
+    </select>
+
+
+</mapper>

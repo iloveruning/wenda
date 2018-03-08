@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cll.wenda.mapper.ReportMapper">
+
+    <insert id="save" parameterType="com.cll.wenda.model.Report" useGeneratedKeys="true" keyProperty="id" keyColumn="report_id">
+        INSERT INTO report(report_type,report_typeid,
+        <if test="reason != null and reason != ''">
+            report_reason,
+        </if>
+       report_radio)
+        VALUES (#{type},#{typeId},
+        <if test="reason != null and reason != ''">
+            #{reason},
+        </if>
+      #{radio})
+
+    </insert>
+
+
+    <select id="listAllReport" resultType="com.cll.wenda.model.Report">
+        SELECT report_id id,report_puber puber ,report_reason reason ,report_type type ,
+        report_radio radio ,report_typeid typeId,report_pubtime pubtime
+        FROM report
+        ORDER BY report_pubtime DESC
+
+    </select>
+
+
+
+</mapper>
